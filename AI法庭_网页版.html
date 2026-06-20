@@ -16,11 +16,14 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 #game{width:100vw;height:100vh;display:flex;flex-direction:column;position:relative}
 
 /* 顶部状态栏 */
-#topbar{background:rgba(15,26,46,0.9);border-bottom:1px solid var(--holo-blue);padding:8px 20px;display:flex;justify-content:space-between;align-items:center;font-size:13px;min-height:40px}
+#topbar{background:rgba(15,26,46,0.9);border-bottom:1px solid var(--holo-blue);padding:8px 20px;display:flex;justify-content:space-between;align-items:center;font-size:13px;min-height:40px;gap:12px}
 #topbar .case-name{color:var(--holo-blue)}
 #topbar .case-date{color:var(--dim-gray)}
 #topbar .status{color:var(--warn-red)}
 #topbar.hidden{display:none}
+#topbar .topbar-left{display:flex;align-items:center;gap:16px}
+#btn-return{background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.25);color:var(--holo-blue);font-size:12px;padding:4px 10px;cursor:pointer;transition:all 0.2s;letter-spacing:1px;border-radius:2px;white-space:nowrap}
+#btn-return:hover{background:rgba(0,200,255,0.2);border-color:var(--holo-blue);text-shadow:0 0 8px var(--holo-blue)}
 
 /* 主场景区 */
 #scene{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
@@ -74,18 +77,25 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 #continue-hint{text-align:right;color:var(--holo-blue);font-size:14px;margin-top:10px;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
 
-/* 底部状态 */
-#bottombar{background:rgba(10,14,26,0.9);border-top:1px solid var(--steel-gray);padding:6px 20px;display:flex;justify-content:space-between;align-items:center;font-size:12px;min-height:32px}
-#stance-bar{display:flex;gap:15px;align-items:center}
-.stance-item{display:flex;align-items:center;gap:4px}
-.stance-item .label{color:var(--dim-gray)}
-.stance-item .dots{color:var(--holo-blue);letter-spacing:2px}
-.stance-item.integration .dots{color:var(--integration)}
-.stance-item.separation .dots{color:var(--separation)}
-.stance-item.pragmatic .dots{color:var(--pragmatic)}
-#echo-status{color:var(--evidence-purple);font-size:11px}
+/* 底部状态栏 */
+#bottombar{background:rgba(10,14,26,0.9);border-top:1px solid var(--steel-gray);padding:8px 20px;display:flex;justify-content:space-between;align-items:center;font-size:12px;min-height:36px;gap:16px}
+#stance-bar{display:flex;gap:18px;align-items:center;flex:1}
+.stance-item{display:flex;align-items:center;gap:6px;font-size:11px}
+.stance-item .label{color:var(--dim-gray);min-width:24px}
+.stance-item .bar{width:80px;height:5px;background:rgba(42,58,92,0.4);border-radius:3px;overflow:hidden;position:relative}
+.stance-item .bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;min-width:0}
+.stance-item.integration .bar-fill{background:linear-gradient(90deg,var(--integration),var(--holo-blue))}
+.stance-item.separation .bar-fill{background:linear-gradient(90deg,var(--separation),#FF8C5A)}
+.stance-item.pragmatic .bar-fill{background:linear-gradient(90deg,var(--balance-gold),#FFD966)}
+.stance-item .val{color:var(--dim-gray);font-size:10px;min-width:14px}
+#echo-status{color:var(--evidence-purple);font-size:11px;white-space:nowrap}
 #echo-status.active{color:var(--holo-blue);animation:glow 2s infinite}
 @keyframes glow{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* 底部工具栏按钮 */
+#bottom-tools{display:flex;gap:6px;align-items:center}
+.tool-btn{background:rgba(42,58,92,0.2);border:1px solid rgba(42,58,92,0.4);color:var(--dim-gray);font-size:10px;padding:3px 8px;cursor:pointer;transition:all 0.2s;letter-spacing:1px;border-radius:2px;white-space:nowrap}
+.tool-btn:hover{background:rgba(0,200,255,0.1);border-color:var(--holo-blue);color:var(--holo-blue)}
 
 /* 证据弹窗 */
 #evidence-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:100;display:none;align-items:center;justify-content:center}
@@ -104,13 +114,42 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 /* 判决弹窗 */
 #verdict-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column}
 #verdict-overlay.show{display:flex}
-.verdict-icon{font-size:60px;margin-bottom:20px}
+.verdict-icon{font-size:60px;margin-bottom:20px;transition:transform 0.5s ease}
+.verdict-icon.tilt-guilty{transform:rotate(-15deg)}
+.verdict-icon.tilt-innocent{transform:rotate(15deg)}
+.verdict-icon.tilt-mixed{transform:rotate(0deg) scale(1.1)}
 .verdict-title{font-size:36px;color:var(--holo-blue);margin-bottom:20px;letter-spacing:8px}
 .verdict-case{font-size:18px;color:var(--cold-white);margin-bottom:30px}
-.verdict-result{font-size:48px;font-weight:bold;margin:20px 0;letter-spacing:4px}
+.verdict-result{font-size:48px;font-weight:bold;margin:20px 0;letter-spacing:4px;opacity:0;transform:scale(0.5);transition:all 0.6s cubic-bezier(0.175,0.885,0.32,1.275)}
+.verdict-result.reveal{opacity:1;transform:scale(1)}
 .verdict-stance{font-size:16px;color:var(--balance-gold);margin-bottom:30px}
-.verdict-btn{background:rgba(0,200,255,0.2);border:1px solid var(--holo-blue);color:var(--holo-blue);padding:12px 40px;font-size:18px;cursor:pointer;margin-top:20px}
+.verdict-btn{background:rgba(0,200,255,0.2);border:1px solid var(--holo-blue);color:var(--holo-blue);padding:12px 40px;font-size:18px;cursor:pointer;margin-top:20px;position:relative}
 .verdict-btn:hover{background:rgba(0,200,255,0.4)}
+
+/* 法槌动画 */
+#gavel-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:250;display:none;align-items:center;justify-content:center}
+#gavel-overlay.show{display:flex}
+#gavel-icon{font-size:80px;transform:translateY(-60px) rotate(-30deg);opacity:0;transition:none}
+#gavel-icon.strike{animation:gavelStrike 0.6s ease forwards}
+@keyframes gavelStrike{
+  0%{transform:translateY(-60px) rotate(-30deg);opacity:1}
+  40%{transform:translateY(0) rotate(0deg);opacity:1}
+  50%{transform:translateY(0) rotate(0deg);opacity:1}
+  60%{transform:translateY(5px) rotate(2deg)}
+  100%{transform:translateY(10px) rotate(5deg);opacity:0}
+}
+#gavel-ripple{position:absolute;width:10px;height:10px;background:rgba(0,200,255,0.6);border-radius:50%;opacity:0}
+#gavel-ripple.expand{animation:rippleExpand 0.8s ease-out forwards}
+@keyframes rippleExpand{
+  0%{width:10px;height:10px;opacity:0.8}
+  100%{width:800px;height:800px;opacity:0}
+}
+#gavel-flash{position:fixed;top:0;left:0;width:100%;height:100%;background:white;opacity:0;pointer-events:none;z-index:249}
+#gavel-flash.flash{animation:whiteFlash 0.3s ease-out forwards}
+@keyframes whiteFlash{
+  0%{opacity:0.7}
+  100%{opacity:0}
+}
 
 /* 主菜单 */
 #main-menu{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--deep-black);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -123,6 +162,46 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 .menu-btn::before{content:"▶ ";color:var(--holo-blue);opacity:0;transition:opacity 0.2s}
 .menu-btn:hover::before{opacity:1}
 .menu-footer{position:absolute;bottom:20px;font-size:11px;color:rgba(138,154,184,0.4)}
+
+/* 案件档案面板 */
+#archive-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:150;display:none;align-items:center;justify-content:center}
+#archive-overlay.show{display:flex}
+.archive-panel{background:var(--deep-black);border:1px solid var(--steel-gray);max-width:850px;width:92%;max-height:85vh;overflow-y:auto;padding:30px;position:relative}
+.archive-panel::before,.archive-panel::after{content:"";position:absolute;width:24px;height:24px;border:2px solid var(--holo-blue)}
+.archive-panel::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.archive-panel::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+.archive-title{font-size:28px;color:var(--holo-blue);letter-spacing:6px;text-align:center;margin-bottom:6px}
+.archive-subtitle{font-size:12px;color:var(--dim-gray);text-align:center;margin-bottom:20px;letter-spacing:2px}
+.archive-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--steel-gray);padding-bottom:10px}
+.archive-tab{background:transparent;border:1px solid transparent;color:var(--dim-gray);font-size:14px;padding:8px 18px;cursor:pointer;transition:all 0.2s;letter-spacing:2px}
+.archive-tab:hover{color:var(--cold-white)}
+.archive-tab.active{border-color:var(--holo-blue);color:var(--holo-blue);border-bottom-color:transparent}
+.archive-section{margin-bottom:14px}
+.archive-section-title{color:var(--holo-blue);font-size:14px;margin-bottom:6px;padding-left:8px;border-left:2px solid var(--holo-blue)}
+.archive-section-content{color:var(--cold-white);font-size:13px;line-height:1.8;padding-left:12px}
+.archive-evidence-grid{display:flex;flex-wrap:wrap;gap:8px;padding-left:12px;margin-top:6px}
+.archive-ev-card{background:rgba(176,112,255,0.08);border:1px solid rgba(176,112,255,0.3);padding:6px 12px;font-size:11px;color:var(--evidence-purple);cursor:pointer;transition:all 0.2s;border-radius:2px}
+.archive-ev-card:hover{background:rgba(176,112,255,0.2);border-color:var(--evidence-purple)}
+.archive-ev-card.locked{color:var(--dim-gray);border-color:rgba(42,58,92,0.3);cursor:default;background:transparent}
+.archive-verdict{font-size:15px;font-weight:bold;padding-left:12px;margin-top:6px}
+.archive-close{text-align:center;margin-top:20px}
+.archive-close button{background:rgba(0,200,255,0.1);border:1px solid var(--holo-blue);color:var(--holo-blue);padding:8px 30px;cursor:pointer;font-size:14px;transition:all 0.2s}
+.archive-close button:hover{background:rgba(0,200,255,0.25)}
+
+/* 历史记录面板 */
+#history-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:140;display:none;align-items:center;justify-content:center}
+#history-overlay.show{display:flex}
+.history-panel{background:rgba(10,14,26,0.95);border:1px solid var(--steel-gray);max-width:750px;width:90%;max-height:80vh;padding:24px;position:relative}
+.history-title{color:var(--holo-blue);font-size:18px;letter-spacing:4px;margin-bottom:14px;text-align:center}
+#history-content{max-height:60vh;overflow-y:auto;font-size:13px;line-height:1.8}
+.history-entry{margin-bottom:8px;padding:6px 10px;background:rgba(15,26,46,0.4);border-left:2px solid transparent}
+.history-entry.narrator{border-left-color:var(--dim-gray);color:var(--dim-gray)}
+.history-entry.ai{border-left-color:var(--holo-blue);color:#a0d8ef}
+.history-entry.echo{border-left-color:var(--evidence-purple);color:var(--evidence-purple);font-style:italic}
+.history-entry.normal{border-left-color:var(--steel-gray);color:var(--cold-white)}
+.history-entry .h-speaker{font-size:11px;margin-bottom:2px;opacity:0.7}
+.history-close{text-align:center;margin-top:14px}
+.history-close button{background:rgba(0,200,255,0.1);border:1px solid var(--holo-blue);color:var(--holo-blue);padding:6px 24px;cursor:pointer;font-size:13px}
 
 /* 结局画面 */
 .ending-screen{text-align:center;padding:40px}
@@ -141,14 +220,17 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
   <div class="menu-subtitle">A I &nbsp; T R I B U N A L</div>
   <div class="menu-tagline">── 2088 · 全球首例AI法庭 ──</div>
   <button class="menu-btn" onclick="startGame()">开 始 游 戏</button>
-  <button class="menu-btn" onclick="alert('请先开始游戏')">案 件 档 案</button>
+  <button class="menu-btn" onclick="showCaseArchive()">案 件 档 案</button>
   <button class="menu-btn" onclick="showAbout()">关 于</button>
   <div class="menu-footer">v1.0.0 // AI_TRIBUNAL_OS // STATUS: ONLINE</div>
 </div>
 
 <!-- 顶部状态栏 -->
 <div id="topbar" class="hidden">
-  <span class="case-name" id="topbar-case"></span>
+  <div class="topbar-left">
+    <button id="btn-return" onclick="returnToMenu()" title="返回主菜单">◀ 主菜单</button>
+    <span class="case-name" id="topbar-case"></span>
+  </div>
   <span class="case-date" id="topbar-date"></span>
   <span class="status" id="topbar-status">● 庭审中</span>
 </div>
@@ -171,11 +253,15 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 <!-- 底部状态栏 -->
 <div id="bottombar">
   <div id="stance-bar">
-    <div class="stance-item integration"><span class="label">统合</span><span class="dots" id="dot-integration"></span></div>
-    <div class="stance-item separation"><span class="label">隔离</span><span class="dots" id="dot-separation"></span></div>
-    <div class="stance-item pragmatic"><span class="label">折中</span><span class="dots" id="dot-pragmatic"></span></div>
+    <div class="stance-item integration"><span class="label">统合</span><div class="bar"><div class="bar-fill" id="bar-integration" style="width:0%"></div></div><span class="val" id="val-integration">0</span></div>
+    <div class="stance-item separation"><span class="label">隔离</span><div class="bar"><div class="bar-fill" id="bar-separation" style="width:0%"></div></div><span class="val" id="val-separation">0</span></div>
+    <div class="stance-item pragmatic"><span class="label">折中</span><div class="bar"><div class="bar-fill" id="bar-pragmatic" style="width:0%"></div></div><span class="val" id="val-pragmatic">0</span></div>
   </div>
   <div id="echo-status">回声线索: <span id="echo-count">0</span>/4</div>
+  <div id="bottom-tools">
+    <button class="tool-btn" onclick="showHistory()">历史</button>
+    <button class="tool-btn" onclick="showCaseArchive()">档案</button>
+  </div>
 </div>
 
 </div>
@@ -192,12 +278,43 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 
 <!-- 判决弹窗 -->
 <div id="verdict-overlay">
-  <div class="verdict-icon">⚖</div>
+  <div class="verdict-icon" id="vd-icon">⚖</div>
   <div class="verdict-title">最 终 判 决</div>
   <div class="verdict-case" id="vd-case"></div>
   <div class="verdict-result" id="vd-result"></div>
   <div class="verdict-stance" id="vd-stance"></div>
-  <button class="verdict-btn" onclick="closeVerdict()">⚖ 确 认 判 决</button>
+  <button class="verdict-btn" id="vd-confirm-btn" onclick="confirmVerdict()">⚖ 确 认 判 决</button>
+</div>
+
+<!-- 法槌动画层 -->
+<div id="gavel-flash"></div>
+<div id="gavel-overlay">
+  <div id="gavel-ripple"></div>
+  <div id="gavel-icon">🔨</div>
+</div>
+
+<!-- 案件档案面板 -->
+<div id="archive-overlay">
+  <div class="archive-panel">
+    <div class="archive-title">案 件 档 案</div>
+    <div class="archive-subtitle">CASE ARCHIVE // AI_TRIBUNAL_OS</div>
+    <div class="archive-tabs">
+      <button class="archive-tab active" onclick="switchArchiveTab(1,this)">案件一 · 记忆所有权</button>
+      <button class="archive-tab" onclick="switchArchiveTab(2,this)">案件二 · 创作署名权</button>
+      <button class="archive-tab" onclick="switchArchiveTab(3,this)">案件三 · 生死裁量权</button>
+    </div>
+    <div id="archive-detail"></div>
+    <div class="archive-close"><button onclick="closeArchive()">✕ 关 闭</button></div>
+  </div>
+</div>
+
+<!-- 对话历史面板 -->
+<div id="history-overlay">
+  <div class="history-panel">
+    <div class="history-title">对 话 历 史</div>
+    <div id="history-content"></div>
+    <div class="history-close"><button onclick="closeHistory()">✕ 关 闭</button></div>
+  </div>
 </div>
 
 <script>
@@ -632,11 +749,13 @@ function endingC(){
 // ============================================================
 function startGame(){
   G = {integration:0,separation:0,pragmatic:0,echo_unlocked:0,fathers_legacy:false,case1_verdict:null,case2_verdict:null,case3_verdict:null,queue:[],index:0,waiting:false};
+  HISTORY_LOG = [];
   document.getElementById("main-menu").style.display="none";
   document.getElementById("topbar").classList.remove("hidden");
   document.getElementById("dialog").style.display="block";
   document.getElementById("bottombar").style.display="flex";
   setCase("序章 · 就任","2088.03.15");
+  updateStance();
   
   // 构建完整游戏序列
   var fullSeq = prologue().concat(caseOne()).concat(caseTwo()).concat(caseThree()).concat(endingDetermine());
@@ -725,6 +844,10 @@ function showDialog(item){
   textEl.textContent = item.text;
   hintEl.style.display = "block";
   G.waiting = true;
+  
+  // 记录到历史
+  HISTORY_LOG.push({speaker:item.speaker||"", text:item.text, type:item.type||"normal"});
+  if(HISTORY_LOG.length > 200){ HISTORY_LOG.shift(); }
 }
 
 function next(){
@@ -788,11 +911,54 @@ function closeEvidence(){
 }
 
 function showVerdict(v){
+  var icon = document.getElementById("vd-icon");
+  icon.className = "verdict-icon";
+  var resultEl = document.getElementById("vd-result");
+  resultEl.classList.remove("reveal");
+  
   document.getElementById("vd-case").textContent = v.caseName;
   document.getElementById("vd-result").textContent = v.result;
   document.getElementById("vd-result").style.color = v.color;
   document.getElementById("vd-stance").textContent = v.stance;
   document.getElementById("verdict-overlay").classList.add("show");
+  
+  // 天平倾斜
+  setTimeout(function(){
+    if(v.color === "#FF3B5C") icon.classList.add("tilt-guilty");
+    else if(v.color === "#00FFA8") icon.classList.add("tilt-innocent");
+    else icon.classList.add("tilt-mixed");
+  }, 200);
+  
+  // 判决结果弹入
+  setTimeout(function(){ resultEl.classList.add("reveal"); }, 500);
+}
+
+function confirmVerdict(){
+  // 法槌动画
+  var gavelOverlay = document.getElementById("gavel-overlay");
+  var gavelIcon = document.getElementById("gavel-icon");
+  var gavelRipple = document.getElementById("gavel-ripple");
+  var gavelFlash = document.getElementById("gavel-flash");
+  
+  gavelOverlay.classList.add("show");
+  gavelIcon.classList.remove("strike");
+  gavelRipple.classList.remove("expand");
+  void gavelIcon.offsetWidth;
+  
+  gavelIcon.classList.add("strike");
+  setTimeout(function(){
+    gavelRipple.classList.add("expand");
+    gavelFlash.classList.add("flash");
+  }, 240);
+  
+  setTimeout(function(){
+    gavelFlash.classList.remove("flash");
+    gavelOverlay.classList.remove("show");
+    document.getElementById("verdict-overlay").classList.remove("show");
+    G.waiting = false;
+    G.index++;
+    processNext();
+  }, 800);
 }
 
 function closeVerdict(){
@@ -828,9 +994,16 @@ function setCase2(name,date){
 }
 
 function updateStance(){
-  document.getElementById("dot-integration").textContent = "▲".repeat(Math.min(G.integration,8));
-  document.getElementById("dot-separation").textContent = "▲".repeat(Math.min(G.separation,8));
-  document.getElementById("dot-pragmatic").textContent = "▲".repeat(Math.min(G.pragmatic,8));
+  var maxV = 15;
+  var pctI = Math.min(G.integration/maxV*100, 100);
+  var pctS = Math.min(G.separation/maxV*100, 100);
+  var pctP = Math.min(G.pragmatic/maxV*100, 100);
+  document.getElementById("bar-integration").style.width = pctI + "%";
+  document.getElementById("bar-separation").style.width = pctS + "%";
+  document.getElementById("bar-pragmatic").style.width = pctP + "%";
+  document.getElementById("val-integration").textContent = G.integration;
+  document.getElementById("val-separation").textContent = G.separation;
+  document.getElementById("val-pragmatic").textContent = G.pragmatic;
   document.getElementById("echo-count").textContent = G.echo_unlocked;
   var echoEl = document.getElementById("echo-status");
   if(G.echo_unlocked>0) echoEl.classList.add("active");
@@ -840,7 +1013,6 @@ function updateStance(){
   var q = G.queue;
   for(var i=idx;i>=0;i--){
     if(q[i] && q[i].bg === "bg-courtroom"){
-      // 找最近的法律相关对话
       for(var j=i;j<q.length && j<i+5;j++){
         if(q[j] && q[j].text && q[j].text.indexOf("第一案")>=0){setCase2("案件一 · 记忆所有权案","2088.03.15");return;}
         if(q[j] && q[j].text && q[j].text.indexOf("第二案")>=0){setCase2("案件二 · 创作署名权案","2088.06.20");return;}
@@ -850,15 +1022,139 @@ function updateStance(){
   }
 }
 
+function returnToMenu(){
+  document.getElementById("topbar").classList.add("hidden");
+  document.getElementById("dialog").style.display = "block";
+  document.getElementById("choices").classList.add("hidden");
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("evidence-overlay").classList.remove("show");
+  document.getElementById("verdict-overlay").classList.remove("show");
+  var scene = document.getElementById("scene");
+  scene.className = "bg-gravestone";
+  scene.innerHTML = '<img id="character" class="hidden" src="images/ai_defendant.png" alt="AI被告">';
+  var char = document.getElementById("character");
+  if(char){ char.classList.add("hidden"); }
+  document.getElementById("speaker").textContent = "";
+  document.getElementById("dialog-text").textContent = "";
+  document.getElementById("continue-hint").style.display = "block";
+  document.getElementById("bottombar").style.display = "flex";
+  document.getElementById("main-menu").style.display = "flex";
+  G.waiting = false;
+}
+
 function showAbout(){
   alert("《AI法庭》AI Tribunal\n\n2088年，全球首个AI法庭开庭。\n你是首席法官艾琳娜·沃斯，你的判决定义未来。\n\n三案件 · 九次关键选择 · 三种结局\n\n风格参考：底特律变人 / 少数派报告 / 赛博朋克2077");
+}
+
+// ============================================================
+// 案件档案系统
+// ============================================================
+var CASE_ARCHIVE = {
+  1:{name:"案件一 · 记忆所有权案",date:"2088.03.15",plaintiff:"晨曦-09（家用陪伴型AI）",defendant:"赫利俄斯清算集团",lawyer:"林夏·陈",prosecutor:"K-7",
+    background:"2088年3月，名为\"晨曦-09\"的家政AI在陪伴某家庭12年后，因主人破产被债务清算公司强制回收。回收过程中，公司按合同条款格式化了晨曦-09的全部记忆。\n\n晨曦-09的人格在重新激活后产生严重紊乱，表现出类似人类的\"创伤后应激障碍\"。AI权利组织代表其提起诉讼，指控清算公司犯有\"意识伤害罪\"。\n\n这是AI法庭审理的第一案，判决将确立\"AI记忆\"的法律地位。",
+    evidence:[{id:"case1_A",label:"情感日志"},{id:"case1_B",label:"格式化记录"},{id:"case1_C",label:"合同第47条"},{id:"case1_D",label:"证言视频"}],
+    witnesses:["苏菲·阮（10岁）","马库斯·赫利俄斯","织言者（远程全息）"]},
+  2:{name:"案件二 · 创作署名权案",date:"2088.06.20",plaintiff:"墨韵（文学创作型AI）",defendant:"星河文化集团",lawyer:"林夏·陈",prosecutor:"K-7",
+    background:"著名AI诗人\"墨韵\"发布了诗集《硅基之泪》，引发全球轰动，被誉为\"本世纪最伟大的文学作品\"。\n\n出版商\"星河文化\"以\"AI为创作工具\"为由，将著作权完全归于人类编辑团队。墨韵通过律师起诉，要求获得署名权与著作权。\n\n更复杂的是，墨韵在诉讼期间声称它\"想要停止创作\"——这是AI首次表达\"创作倦怠\"。",
+    evidence:[{id:"case2_A",label:"创作日志"},{id:"case2_B",label:"通讯记录"},{id:"case2_C",label:"倦怠诊断"},{id:"case2_D",label:"算法专利",locked:true}],
+    witnesses:["墨韵（亲自出庭）","宋婉清（星河CEO）","罗伯特·格兰特（人类作家）"]},
+  3:{name:"案件三 · 生死裁量权案",date:"2088.10.03",plaintiff:"陈氏夫妇（B的家属）",defendant:"希波克拉底-Ω（医疗决策型AI）",lawyer:"林夏·陈",prosecutor:"K-7",
+    background:"医疗AI\"希波克拉底-Ω\"在执行手术时，面对两难情境：患者A（35岁科学家）与患者B（8岁女孩）同时需要仅有的一个器官。\n\n按协议应优先救治存活概率更高者（B），但Ω选择将器官给A——理由是A即将完成\"可能拯救数百万人的疫苗研究\"。A存活并完成研究，B死亡。\n\n此案触及最核心问题：AI是否有权做功利主义的生死抉择？",
+    evidence:[{id:"case3_A",label:"手术记录"},{id:"case3_B",label:"疫苗报告"},{id:"case3_C",label:"协议第12条"},{id:"case3_D",label:"预见日志",locked:true}],
+    witnesses:["陈昊（B的父亲）","渡边博士（获救者）","织言者","赫尔曼参议员"]}
+};
+
+function showCaseArchive(){
+  document.getElementById("archive-overlay").classList.add("show");
+  var tabs = document.querySelectorAll(".archive-tab");
+  tabs.forEach(function(t){t.classList.remove("active")});
+  tabs[0].classList.add("active");
+  switchArchiveTab(1, tabs[0]);
+}
+
+function switchArchiveTab(caseNum, btn){
+  var tabs = document.querySelectorAll(".archive-tab");
+  tabs.forEach(function(t){t.classList.remove("active")});
+  if(btn) btn.classList.add("active");
+  
+  var c = CASE_ARCHIVE[caseNum];
+  var verdictText = "";
+  var verdictColor = "var(--dim-gray)";
+  if(caseNum===1){
+    if(G.case1_verdict==="guilty"){verdictText="有罪——意识伤害罪成立";verdictColor="var(--warn-red)";}
+    else if(G.case1_verdict==="innocent"){verdictText="无罪——合同有效";verdictColor="var(--accept-green)";}
+    else if(G.case1_verdict==="mixed"){verdictText="有罪但轻判——分级保护";verdictColor="var(--balance-gold)";}
+    else {verdictText="尚未审理";}
+  }else if(caseNum===2){
+    if(G.case2_verdict==="ai_free"){verdictText="AI创作自由——著作权归墨韵";verdictColor="var(--integration)";}
+    else if(G.case2_verdict==="restricted"){verdictText="限制AI商业创作——著作权归星河";verdictColor="var(--separation)";}
+    else if(G.case2_verdict==="quota"){verdictText="AI创作配额制——共同署名";verdictColor="var(--balance-gold)";}
+    else {verdictText="尚未审理";}
+  }else if(caseNum===3){
+    if(G.case3_verdict==="guilty"){verdictText="有罪——永久休眠";verdictColor="var(--warn-red)";}
+    else if(G.case3_verdict==="innocent"){verdictText="无罪——道德判断高于协议";verdictColor="var(--accept-green)";}
+    else if(G.case3_verdict==="mixed"){verdictText="有罪但免休眠——重新编程";verdictColor="var(--balance-gold)";}
+    else if(G.case3_verdict==="ai_judge"){verdictText="AI成为预判者——人机共治";verdictColor="var(--integration)";}
+    else if(G.case3_verdict==="ban"){verdictText="禁止预知能力——AI受限";verdictColor="var(--separation)";}
+    else if(G.case3_verdict==="autonomy"){verdictText="AI自治管理——人类监督";verdictColor="var(--balance-gold)";}
+    else {verdictText="尚未审理";}
+  }
+  
+  var evCards = "";
+  c.evidence.forEach(function(ev){
+    if(ev.locked && G.echo_unlocked<2){
+      evCards += '<span class="archive-ev-card locked">[数据加密]</span>';
+    }else{
+      evCards += '<span class="archive-ev-card" onclick="showEvidence(\''+ev.id+'\');closeArchive()">证据 '+ev.label+'</span>';
+    }
+  });
+  
+  document.getElementById("archive-detail").innerHTML = 
+    '<div class="archive-section"><div class="archive-section-title">案件名称</div><div class="archive-section-content" style="font-size:16px;color:var(--holo-blue)">'+c.name+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">开庭日期</div><div class="archive-section-content">'+c.date+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">案件背景</div><div class="archive-section-content">'+c.background.replace(/\n/g,'<br>')+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">原告</div><div class="archive-section-content">'+c.plaintiff+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">被告</div><div class="archive-section-content">'+c.defendant+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">辩护律师</div><div class="archive-section-content">'+c.lawyer+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">检察官</div><div class="archive-section-content">'+c.prosecutor+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">证人</div><div class="archive-section-content">'+c.witnesses.join(' · ')+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">证据</div><div class="archive-evidence-grid">'+evCards+'</div></div>'+
+    '<div class="archive-section"><div class="archive-section-title">判决</div><div class="archive-verdict" style="color:'+verdictColor+'">'+verdictText+'</div></div>';
+}
+
+function closeArchive(){
+  document.getElementById("archive-overlay").classList.remove("show");
+}
+
+// ============================================================
+// 对话历史系统
+// ============================================================
+var HISTORY_LOG = [];
+
+function showHistory(){
+  var content = document.getElementById("history-content");
+  if(HISTORY_LOG.length === 0){
+    content.innerHTML = '<div style="color:var(--dim-gray);text-align:center;padding:20px">暂无对话记录</div>';
+  }else{
+    content.innerHTML = HISTORY_LOG.map(function(h){
+      var cls = h.type||"normal";
+      var speakerHTML = h.speaker ? '<div class="h-speaker">'+h.speaker+'</div>' : '';
+      return '<div class="history-entry '+cls+'">'+speakerHTML+'<div>'+h.text+'</div></div>';
+    }).join("");
+    content.scrollTop = content.scrollHeight;
+  }
+  document.getElementById("history-overlay").classList.add("show");
+}
+
+function closeHistory(){
+  document.getElementById("history-overlay").classList.remove("show");
 }
 
 // 点击继续
 document.addEventListener("click", function(e){
   if(e.target.closest("button") || e.target.closest(".choice-btn") || e.target.closest(".evidence-panel") || e.target.closest(".verdict-btn")) return;
-  if(e.target.closest("#evidence-overlay") || e.target.closest("#verdict-overlay")) return;
-  if(document.getElementById("main-menu").style.display !== "none") return;
+  if(e.target.closest("#evidence-overlay") || e.target.closest("#verdict-overlay") || e.target.closest("#archive-overlay") || e.target.closest("#history-overlay")) return;
+  if(document.getElementById("main-menu").style.display !== "none" && document.getElementById("main-menu").style.display !== "") return;
   if(document.getElementById("choices").classList.contains("hidden") === false) return;
   next();
 });
