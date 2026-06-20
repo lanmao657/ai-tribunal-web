@@ -3,12 +3,11 @@
 # GUI 配置 - Cyber Tribunal 风格
 # =============================================================================
 
+init offset = -1
+
 # -----------------------------------------------------------------------------
 # 基础尺寸
 # -----------------------------------------------------------------------------
-
-define gui.init_width = 1920
-define gui.init_height = 1080
 
 # -----------------------------------------------------------------------------
 # 颜色定义 - Cyber Tribunal 配色
@@ -38,6 +37,9 @@ define gui.text_font = "SourceHanSansLite.ttf"
 define gui.name_text_font = "SourceHanSansLite.ttf"
 define gui.interface_text_font = "SourceHanSansLite.ttf"
 define gui.system_font = "SourceHanSansLite.ttf"
+
+init python:
+    gui.init(1920, 1080)
 
 # -----------------------------------------------------------------------------
 # 对话框

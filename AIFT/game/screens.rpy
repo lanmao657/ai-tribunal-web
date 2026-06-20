@@ -467,8 +467,8 @@ screen preferences():
                             text_hover_color "#4DD9FF"
                             xalign 0.5
 
-                        textbutton "选择后继续 [X]":
-                            action Preference("skip after choices", "toggle")
+                        textbutton "等待语音 [X]":
+                            action Preference("wait for voice", "toggle")
                             text_size 20
                             text_color "#E8F0FF"
                             text_hover_color "#4DD9FF"
@@ -506,12 +506,6 @@ screen preferences():
             hbox:
                 xalign 0.5
                 spacing 40
-
-                textbutton "恢 复 默 认":
-                    action Show("confirm", message="恢复默认设置？", yes_action=[Preference("all", "default"), Hide("confirm")], no_action=Hide("confirm"))
-                    text_size 20
-                    text_color "#8A9AB8"
-                    text_hover_color "#4DD9FF"
 
                 textbutton "应 用":
                     action Return()
@@ -1459,16 +1453,16 @@ screen stance_indicator():
 
                 # 统合派
                 if integration > 0:
-                    text "统合" size 12 color "#00C8FF" yalign 0.5 font "DejaVuSans.ttf"
-                    text "▲" * min(integration, 5) size 12 color "#00C8FF" yalign 0.5 font "DejaVuSans.ttf"
+                    text "统合" size 12 color "#00C8FF" yalign 0.5 font "SourceHanSansLite.ttf"
+                    text "▲" * min(integration, 5) size 12 color "#00C8FF" yalign 0.5 font "SourceHanSansLite.ttf"
 
                 if separation > 0:
-                    text "隔离" size 12 color "#FF6B3B" yalign 0.5 font "DejaVuSans.ttf"
-                    text "▲" * min(separation, 5) size 12 color "#FF6B3B" yalign 0.5 font "DejaVuSans.ttf"
+                    text "隔离" size 12 color "#FF6B3B" yalign 0.5 font "SourceHanSansLite.ttf"
+                    text "▲" * min(separation, 5) size 12 color "#FF6B3B" yalign 0.5 font "SourceHanSansLite.ttf"
 
                 if pragmatic > 0:
-                    text "折中" size 12 color "#FFB800" yalign 0.5 font "DejaVuSans.ttf"
-                    text "▲" * min(pragmatic, 5) size 12 color "#FFB800" yalign 0.5 font "DejaVuSans.ttf"
+                    text "折中" size 12 color "#FFB800" yalign 0.5 font "SourceHanSansLite.ttf"
+                    text "▲" * min(pragmatic, 5) size 12 color "#FFB800" yalign 0.5 font "SourceHanSansLite.ttf"
 
 
 # -----------------------------------------------------------------------------

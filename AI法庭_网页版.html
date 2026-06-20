@@ -36,6 +36,16 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 .bg-case-files{background-image:url('images/bg_case_files.png')}
 .bg-evidence{background-image:url('images/bg_evidence.png')}
 
+/* AI被告人物立绘 */
+#character{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:80%;max-width:45%;object-fit:contain;opacity:0;transition:opacity 0.4s ease;filter:drop-shadow(0 0 24px rgba(0,200,255,0.45)) saturate(0.95);pointer-events:none}
+#character.show{opacity:0.92}
+#character.holo-flicker{animation:holoFlicker 4s infinite}
+@keyframes holoFlicker{
+  0%,100%{opacity:0.92;filter:drop-shadow(0 0 24px rgba(0,200,255,0.45)) saturate(0.95)}
+  50%{opacity:0.85;filter:drop-shadow(0 0 32px rgba(0,200,255,0.65)) saturate(1.05)}
+  75%{opacity:0.88;filter:drop-shadow(0 0 20px rgba(0,200,255,0.35)) saturate(0.9)}
+}
+
 /* 对话区 */
 #dialog{background:rgba(10,14,26,0.92);border-top:2px solid var(--holo-blue);padding:20px 30px;min-height:180px;max-height:45vh;overflow-y:auto;position:relative}
 #dialog::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--holo-blue),transparent)}
@@ -144,7 +154,9 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 </div>
 
 <!-- 场景区 -->
-<div id="scene" class="bg-gravestone"></div>
+<div id="scene" class="bg-gravestone">
+  <img id="character" class="hidden" src="images/ai_defendant.png" alt="AI被告">
+</div>
 
 <!-- 对话区 -->
 <div id="dialog">
@@ -640,7 +652,17 @@ function processNext(){
   var item = G.queue[G.index];
   
   if(item.bg){
-    document.getElementById("scene").className = item.bg;
+    var scene = document.getElementById("scene");
+    scene.className = item.bg;
+    var char = document.getElementById("character");
+    if(item.bg === "bg-courtroom" || item.bg === "bg-judge"){
+      char.classList.remove("hidden");
+      char.classList.add("show");
+      char.classList.add("holo-flicker");
+    }else{
+      char.classList.remove("show","holo-flicker");
+      char.classList.add("hidden");
+    }
     G.index++;
     processNext();
     return;
