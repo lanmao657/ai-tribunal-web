@@ -39,15 +39,20 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 .bg-case-files{background-image:url('images/bg_case_files.png')}
 .bg-evidence{background-image:url('images/bg_evidence.png')}
 
-/* AI被告人物立绘 */
-#character{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:80%;max-width:45%;object-fit:contain;opacity:0;transition:opacity 0.4s ease;filter:drop-shadow(0 0 24px rgba(0,200,255,0.45)) saturate(0.95);pointer-events:none}
-#character.show{opacity:0.92}
-#character.holo-flicker{animation:holoFlicker 4s infinite}
+/* 人物立绘系统 - 支持多角色左右站位 */
+#character-left{position:absolute;bottom:0;left:5%;height:80%;max-width:40%;object-fit:contain;opacity:0;transition:opacity 0.5s ease;filter:drop-shadow(0 0 24px rgba(0,200,255,0.35)) saturate(0.95);pointer-events:none;z-index:2}
+#character-right{position:absolute;bottom:0;right:5%;height:80%;max-width:40%;object-fit:contain;opacity:0;transition:opacity 0.5s ease;filter:drop-shadow(0 0 24px rgba(0,200,255,0.35)) saturate(0.95);pointer-events:none;z-index:2}
+#character-center{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:80%;max-width:45%;object-fit:contain;opacity:0;transition:opacity 0.4s ease;filter:drop-shadow(0 0 24px rgba(0,200,255,0.45)) saturate(0.95);pointer-events:none;z-index:3}
+.character-show{opacity:0.92 !important}
+.character-holo{animation:holoFlicker 4s infinite}
+.character-human{filter:drop-shadow(0 0 16px rgba(200,220,255,0.3)) saturate(0.95) !important}
+.character-dim{opacity:0.45 !important;filter:drop-shadow(0 0 8px rgba(0,200,255,0.15)) saturate(0.7) !important}
 @keyframes holoFlicker{
   0%,100%{opacity:0.92;filter:drop-shadow(0 0 24px rgba(0,200,255,0.45)) saturate(0.95)}
   50%{opacity:0.85;filter:drop-shadow(0 0 32px rgba(0,200,255,0.65)) saturate(1.05)}
   75%{opacity:0.88;filter:drop-shadow(0 0 20px rgba(0,200,255,0.35)) saturate(0.9)}
 }
+.character-label{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--holo-blue);background:rgba(10,14,26,0.8);padding:2px 10px;border:1px solid rgba(0,200,255,0.3);white-space:nowrap;letter-spacing:1px;pointer-events:none;z-index:4}
 
 /* 对话区 */
 #dialog{background:rgba(10,14,26,0.92);border-top:2px solid var(--holo-blue);padding:20px 30px;min-height:180px;max-height:45vh;overflow-y:auto;position:relative}
@@ -237,7 +242,9 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 
 <!-- 场景区 -->
 <div id="scene" class="bg-gravestone">
-  <img id="character" class="hidden" src="images/ai_defendant.png" alt="AI被告">
+  <img id="character-left" class="hidden" src="" alt="角色立绘">
+  <img id="character-right" class="hidden" src="" alt="角色立绘">
+  <img id="character-center" class="hidden" src="" alt="角色立绘">
 </div>
 
 <!-- 对话区 -->
@@ -764,6 +771,85 @@ function startGame(){
   processNext();
 }
 
+// ============================================================
+// 角色立绘映射
+// ============================================================
+var CHAR_MAP = {
+  "艾琳娜":"images/ai_defendant.png",
+  "K-7":"images/k7_prosecutor.png",
+  "林夏·陈":"images/linxia_chen_lawyer.png",
+  "林夏":"images/linxia_chen_lawyer.png",
+  "织言者":"images/weaver_ai_leader.png",
+  "晨曦-09":"images/dawn09_plaintiff.png",
+  "马库斯·赫利俄斯":"images/marcus_helios_ceo.png",
+  "马库斯":"images/marcus_helios_ceo.png",
+  "墨韵":"images/inkwell_poet.png",
+  "希波克拉底-Ω":"images/hippocrates_omega.png",
+  "陈昊":"images/chen_hao_father.png",
+  "宋婉清":"images/song_wanqing_ceo.png",
+  "罗伯特·格兰特":"images/linxia_chen_lawyer.png",
+  "赫尔曼参议员":"images/marcus_helios_ceo.png",
+  "法庭书记官":"",
+  "回声":"",
+  "苏菲·阮":"",
+  "艾琳娜·沃斯":"images/ai_defendant.png"
+};
+var CHAR_SIDE = {
+  "艾琳娜":"center","艾琳娜·沃斯":"center",
+  "K-7":"left","林夏·陈":"right","林夏":"right",
+  "织言者":"center","晨曦-09":"center","墨韵":"center",
+  "希波克拉底-Ω":"center","回声":"center",
+  "马库斯·赫利俄斯":"right","马库斯":"right",
+  "宋婉清":"right","罗伯特·格兰特":"left",
+  "陈昊":"left","赫尔曼参议员":"right"
+};
+var CHAR_TYPE = {
+  "K-7":"ai","织言者":"ai","晨曦-09":"ai","墨韵":"ai","希波克拉底-Ω":"ai","回声":"echo",
+  "艾琳娜":"human","艾琳娜·沃斯":"human","林夏·陈":"human","林夏":"human",
+  "马库斯·赫利俄斯":"human","马库斯":"human","宋婉清":"human",
+  "罗伯特·格兰特":"human","陈昊":"human","赫尔曼参议员":"human"
+};
+
+function setCharacter(speaker){
+  var leftEl = document.getElementById("character-left");
+  var rightEl = document.getElementById("character-right");
+  var centerEl = document.getElementById("character-center");
+  
+  // 隐藏所有
+  [leftEl,rightEl,centerEl].forEach(function(el){
+    el.classList.remove("character-show","character-holo","character-human","character-dim");
+    el.classList.add("hidden");
+    el.src = "";
+  });
+  
+  if(!speaker || speaker === "" || speaker === "法庭书记官" || speaker === "苏菲·阮") return;
+  
+  var imgSrc = CHAR_MAP[speaker];
+  if(!imgSrc) return;
+  
+  var side = CHAR_SIDE[speaker] || "center";
+  var type = CHAR_TYPE[speaker] || "ai";
+  var targetEl = side === "left" ? leftEl : side === "right" ? rightEl : centerEl;
+  
+  targetEl.src = imgSrc;
+  targetEl.classList.remove("hidden");
+  targetEl.classList.add("character-show");
+  
+  if(type === "ai" || type === "echo"){
+    targetEl.classList.add("character-holo");
+  }else{
+    targetEl.classList.add("character-human");
+  }
+  
+  // 非当前说话者变暗
+  [leftEl,rightEl,centerEl].forEach(function(el){
+    if(el !== targetEl && !el.classList.contains("hidden")){
+      el.classList.remove("character-show");
+      el.classList.add("character-dim");
+    }
+  });
+}
+
 function processNext(){
   if(G.index >= G.queue.length){
     return;
@@ -773,15 +859,13 @@ function processNext(){
   if(item.bg){
     var scene = document.getElementById("scene");
     scene.className = item.bg;
-    var char = document.getElementById("character");
-    if(item.bg === "bg-courtroom" || item.bg === "bg-judge"){
-      char.classList.remove("hidden");
-      char.classList.add("show");
-      char.classList.add("holo-flicker");
-    }else{
-      char.classList.remove("show","holo-flicker");
-      char.classList.add("hidden");
-    }
+    // 重置所有立绘
+    ["character-left","character-right","character-center"].forEach(function(id){
+      var el = document.getElementById(id);
+      el.classList.remove("character-show","character-holo","character-human","character-dim");
+      el.classList.add("hidden");
+      el.src = "";
+    });
     G.index++;
     processNext();
     return;
@@ -824,6 +908,11 @@ function showDialog(item){
   var speakerEl = document.getElementById("speaker");
   var textEl = document.getElementById("dialog-text");
   var hintEl = document.getElementById("continue-hint");
+  
+  // 切换角色立绘
+  if(item.type !== "narrator" && item.speaker !== ""){
+    setCharacter(item.speaker);
+  }
   
   // 设置说话者
   if(item.type === "narrator" || item.speaker === ""){
@@ -1031,9 +1120,7 @@ function returnToMenu(){
   document.getElementById("verdict-overlay").classList.remove("show");
   var scene = document.getElementById("scene");
   scene.className = "bg-gravestone";
-  scene.innerHTML = '<img id="character" class="hidden" src="images/ai_defendant.png" alt="AI被告">';
-  var char = document.getElementById("character");
-  if(char){ char.classList.add("hidden"); }
+  scene.innerHTML = '<img id="character-left" class="hidden" src="" alt="角色立绘"><img id="character-right" class="hidden" src="" alt="角色立绘"><img id="character-center" class="hidden" src="" alt="角色立绘">';
   document.getElementById("speaker").textContent = "";
   document.getElementById("dialog-text").textContent = "";
   document.getElementById("continue-hint").style.display = "block";
