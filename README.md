@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="images/bg_courtroom.png" alt="AI Tribunal" width="100%" style="border-radius:4px">
+<img src="images/readme_banner.png" alt="AI Tribunal" width="100%" style="border-radius:4px">
 
 <br><br>
 
