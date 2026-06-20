@@ -24,13 +24,17 @@ body{background:var(--deep-black);color:var(--cold-white);font-family:"Microsoft
 
 /* 主场景区 */
 #scene{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
-.bg-courtroom{background:radial-gradient(ellipse at top,var(--court-blue),var(--deep-black))}
-.bg-gravestone{background:radial-gradient(ellipse at center,#1a1a2e,#0a0a14)}
-.bg-judge{background:linear-gradient(180deg,#16213E,#0A0E1A)}
-.bg-hologram{background:radial-gradient(ellipse at center,#0A1A3A,#050510)}
-.bg-end-a{background:linear-gradient(135deg,#2A1A1A,#1a0a0a)}
-.bg-end-b{background:linear-gradient(135deg,#1A1A1A,#0a0a0a)}
-.bg-end-c{background:linear-gradient(135deg,#2A2A3A,#1a1a2e)}
+/* 背景图定义 */
+#scene{background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-image 0.5s ease}
+.bg-courtroom{background-image:url('images/bg_courtroom.png')}
+.bg-gravestone{background-image:url('images/bg_main_menu.png');background-color:#0a0a14}
+.bg-judge{background-image:url('images/bg_judge_bench.png')}
+.bg-hologram{background-image:url('images/bg_hologram.png')}
+.bg-end-a{background-image:url('images/bg_courtroom.png');filter:hue-rotate(320deg) saturate(1.5)}
+.bg-end-b{background-image:url('images/bg_courtroom.png');filter:grayscale(0.8)}
+.bg-end-c{background-image:url('images/bg_hologram.png')}
+.bg-case-files{background-image:url('images/bg_case_files.png')}
+.bg-evidence{background-image:url('images/bg_evidence.png')}
 
 /* 对话区 */
 #dialog{background:rgba(10,14,26,0.92);border-top:2px solid var(--holo-blue);padding:20px 30px;min-height:180px;max-height:45vh;overflow-y:auto;position:relative}
